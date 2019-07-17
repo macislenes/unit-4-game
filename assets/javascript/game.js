@@ -1,70 +1,68 @@
-var magicalLimit = 60;
-var magicalLow= 20;
-var valueLimit = 4;
+// This stores the values of the houses in an array
+var randomNumberArray = [];
+
+// This gives our game values we can easily manipulate later without changing a lot of code 
+    // magicalLimit is the max value the number to guess can be
+var magicalLimit = 120;
+    // magicalLow is the lowest value the number to guess can be
+var magicalLow= 19;
+    // valueLimit is the number of houses or variables you are distributing the randoms numbers amongst
+var numberOfHouses = 4;
+
 
 var magicalNumber = 0;
 var currentTotal = 0;
 
-var option1 = 0;
-var option2 = 0;
-var option3 = 0;
-var option4 = 0;
-
 var wins = 0;
 var losses = 0;
 
-
+// My initialize function will run everytime the game is started or restarted by a win or loss
 function initialize(){
+    randomNumberArray = [];
+    // this is the math problem to store the magicalNumber value
     magicalNumber = Math.floor(Math.random()*(magicalLimit-magicalLow+1)+magicalLow);
+    // your current total against the magicalNumber
     currentTotal = 0;
 
-    option1 = Math.floor((Math.random() * (magicalNumber/valueLimit)) +1);
-    option2 = Math.floor((Math.random() * (magicalNumber/valueLimit)) +1);
+    // this is going to continue giving the houses values based on if the value is already present in the array or not (no duplicates)
+    while(randomNumberArray.length < numberOfHouses){
+        var randomNumberMath =  Math.floor((Math.random() * 12) +1);
+        // only push to the randomNumberArray if it is not already present returning a -1 index value
+        if(randomNumberArray.indexOf(randomNumberMath) == -1){
+            randomNumberArray.push(randomNumberMath);
 
-    while(option1 == option2){
-        option2 = Math.floor((Math.random() * (magicalNumber/valueLimit)) +1);
+        };
     };
+    console.log(randomNumberArray);
 
-    option3 = Math.floor((Math.random() * (magicalNumber/valueLimit)) +1);
-
-    while(option3 == option2 || option3 == option1){
-        option3 = Math.floor((Math.random() * (magicalNumber/valueLimit)) +1);
-    };
-
-    option4 = Math.floor((Math.random() * (magicalNumber/valueLimit)) +1);
-
-    while(option4 == option3 || option4 == option2 || option4 == option1){
-        option4 = Math.floor((Math.random() * (magicalNumber/valueLimit)) +1);
-    };
-
-
-
-    console.log(option1, option2, option3, option4);
-
+    // assigns the appropriate text to the HTML for viewing content
     $("#magicalNumberSpan").text(magicalNumber);
     $("#currentTotalSpan").text(currentTotal);
 
     $("#winSpan").text(wins);
     $("#lossesSpan").text(losses);
-
-    // everytime you hae a new total you have to show it to the user. Print to the current total span
-
-    // then I need to compare that new value to the magical number and check if it is < > = the magical number
-
-    // write a conditional statement if the number is equal you win else/if it is bigger you lose
-
-    // print the win or lose to the header in the HTML
-
 };
 
-$(".stone").on("click", function(){
-    
+// creating the on click event to record the value of that card to the currentTotalSpan
+$(".houseCard").on("click", function(){
+    var onClickValue = Number($(this).attr("id"));
+    currentTotal += randomNumberArray[onClickValue];
+    // the losing condition
+    if(currentTotal > magicalNumber){
+        losses++;
+        $("#resultSpan").text("You Lost!");
+        initialize();
+    }
+    //  the winning condition
+    else if(currentTotal == magicalNumber){
+        wins++;
+        $("#resultSpan").text("You Win!");
+        initialize();
+    };
+
+
+    $("#currentTotalSpan").text(currentTotal);
 });
 
-// for each of the header tags i need to create and on.click function on the class .stone
-// read the id and get the value from an array of values // add this value to the number
 
-
-// Once the game has either been won or lost you will call initialize and reset the game. 
 initialize();
-
